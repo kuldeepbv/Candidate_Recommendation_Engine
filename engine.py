@@ -351,17 +351,17 @@ JOB DESCRIPTION:
 RESUME:
 {resume_text}
 """
-    model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
+    model = genai.GenerativeModel("gemini-1.5-flash")
     resp = model.generate_content(prompt)
     return resp.text.strip()
 
 
 def _fallback_summary(jd_text: str, resume_text: str) -> str:
     # Super-simple fallback: pick top overlapping keywords as bullets
-    jd_words = set(clean__and_lemmatize(jd_text).split())
-    res_words = set(clean__and_lemmatize(resume_text).split())
-    overlap = list(jd_words.intersection(res_words))[:10]
-    bullets = "\n".join([f"- Matches keyword: {w}" for w in overlap]) or "- Relevant experience aligned with JD keywords."
+    def toks(s: str):
+        return {w for w in re.sub(r"[^a-z0-9\s]", " ", s.lower()).split() if len(w) > 2}
+    overlap = list(toks(jd_text).intersection(toks(resume_text)))[:10]
+    bullets = "\n".join(f"- Matches keyword: {w}" for w in overlap) or "- Relevant experience aligned with JD keywords."
     return f"Quick fit summary (fallback):\n{bullets}"
 
 
