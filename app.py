@@ -15,7 +15,7 @@ st.title("Candidate Recommendation Engine")
 
 # --- Inputs ---
 st.subheader("Job Description")
-jd_text = st.text_area(label="placeholder_label", height=240, placeholder="Paste the job description here...")
+jd_text = st.text_area(label="placeholder_label", height=240, placeholder="Paste the job description here...", label_visibility="collapsed")
 uploaded = st.file_uploader("Upload resumes (PDF, DOCX, TXT). Multiple allowed.", type=["pdf","docx","txt"], accept_multiple_files=True)
 
 colA, _ = st.columns([1, 2])
