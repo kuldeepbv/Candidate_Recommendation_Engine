@@ -55,7 +55,7 @@ INDEX_DIR.mkdir(parents=True, exist_ok=True)
 # Embedding model
 # -----------------------------
 # Default: small/fast model. You can swap to 'all-mpnet-base-v2' if you want higher quality
-EMBEDDING_MODEL_NAME = os.environ.get("EMBEDDING_MODEL_NAME", "sentence-transformers/all-MiniLM-L6-v2")
+EMBEDDING_MODEL_NAME = os.environ.get("EMBEDDING_MODEL_NAME", "sentence-transformers/all-mpnet-base-v2")
 _model_cache = None
 
 def get_embedder():
