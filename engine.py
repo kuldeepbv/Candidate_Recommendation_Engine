@@ -1,4 +1,3 @@
-
 import os
 import re
 import io
@@ -343,7 +342,7 @@ def rank_resumes(jd_text: str, top_n: int = 5) -> pd.DataFrame:
 def _gemini_summary(jd_text: str, resume_text: str) -> str:
     prompt = f"""
 Compare the job description and the candidate's resume.
-Write a short, natural explanation in 3–4 sentences about why this candidate is a good fit.
+Write a short, natural explanation in 2-3 sentences about why this candidate is a good fit.
 Avoid bullet points and templates. Be concise and specific.
 
 JOB DESCRIPTION:
