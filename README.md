@@ -1,4 +1,4 @@
-# Resume Matching & Ranking Application
+# Candidate Recommendation Engine
 
 > **Note:**  
 > This project uses the **Google Gemini API** to generate summaries for the top 5 matched resumes.  
