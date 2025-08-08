@@ -346,28 +346,38 @@ Write a short, natural explanation in 2-3 sentences about why this candidate is 
 Avoid bullet points and templates. Be concise and specific.
 
 JOB DESCRIPTION:
-{jd_text}
+{jd_text[:8000]}
 
 RESUME:
-{resume_text}
+{resume_text[:8000]}
 """
     model = genai.GenerativeModel("gemini-1.5-flash")
-    resp = model.generate_content(prompt)
     
-    txt = getattr(resp, "text", None)
-    if not txt:
-        # try to pull text from parts if available
+    delays = [2, 5, 10]  # seconds
+    last_err = None
+    for attempt, delay in enumerate([0, *delays], start=1):
+        if delay:
+            time.sleep(delay)
         try:
-            parts = resp.candidates[0].content.parts
-            txt = "".join(getattr(p, "text", "") for p in parts if hasattr(p, "text"))
-        except Exception:
-            txt = ""
+            resp = model.generate_content(prompt)
+            # Be defensive: sometimes .text is empty but parts carry content
+            txt = getattr(resp, "text", "") or ""
+            if not txt.strip():
+                try:
+                    parts = resp.candidates[0].content.parts
+                    txt = "".join(getattr(p, "text", "") for p in parts if hasattr(p, "text"))
+                except Exception:
+                    pass
+            if txt.strip():
+                return txt.strip()
+            last_err = RuntimeError("Empty response text from Gemini")
+        except Exception as e:
+            # Keep the last error and try again if it looks like a rate limit
+            last_err = e
+            if "429" not in str(e):
+                break  # not a rate-limit; no point retrying
 
-    if txt and txt.strip():
-        return txt.strip()
-
-    # fall back if still empty
-    return _fallback_summary(jd_text, resume_text)
+    raise last_err
 
 
 def _fallback_summary(jd_text: str, resume_text: str) -> str:
@@ -383,9 +393,17 @@ def generate_fit_summary_gemini(jd_text: str, resume_text: str) -> str:
     """
     Uses Gemini if GEMINI_API_KEY is present, else a deterministic fallback summary.
     """
+    cache_key = (hash(jd_text) % (10**9), hash(resume_text) % (10**9))
+    _summary_cache = getattr(generate_fit_summary_gemini, "_cache", {})
+    if cache_key in _summary_cache:
+        return _summary_cache[cache_key]
+
     if GEMINI_ENABLED:
         try:
-            return _gemini_summary(jd_text, resume_text)
+            s = _gemini_summary(jd_text, resume_text)
+            _summary_cache[cache_key] = s
+            generate_fit_summary_gemini._cache = _summary_cache
+            return s
         except Exception as e:
             return _fallback_summary(jd_text, resume_text) + f"\n(Note: Gemini error: {e})"
     else:
