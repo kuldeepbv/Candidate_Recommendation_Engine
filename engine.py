@@ -353,7 +353,21 @@ RESUME:
 """
     model = genai.GenerativeModel("gemini-1.5-flash")
     resp = model.generate_content(prompt)
-    return resp.text.strip()
+    
+    txt = getattr(resp, "text", None)
+    if not txt:
+        # try to pull text from parts if available
+        try:
+            parts = resp.candidates[0].content.parts
+            txt = "".join(getattr(p, "text", "") for p in parts if hasattr(p, "text"))
+        except Exception:
+            txt = ""
+
+    if txt and txt.strip():
+        return txt.strip()
+
+    # fall back if still empty
+    return _fallback_summary(jd_text, resume_text)
 
 
 def _fallback_summary(jd_text: str, resume_text: str) -> str:
