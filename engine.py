@@ -29,7 +29,7 @@ try:
     import google.generativeai as genai
     
     # Directly hard-code your API key here
-    GEMINI_API_KEY = "AIzaSyA3EQxvg8q0dOFHzCuM8KGJCROZBgpGgZk"  # <-- replace with your actual key
+    GEMINI_API_KEY = "AIzaSyBsVxbWAPpE0CgbPg4MHkxhjPANcRHLf4Q"  # <-- replace with your actual key
 
     if GEMINI_API_KEY:
         genai.configure(api_key=GEMINI_API_KEY)
