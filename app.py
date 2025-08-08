@@ -47,7 +47,7 @@ if run_btn:
         st.dataframe(final_df, use_container_width=True)
 
         towrite = io.BytesIO()
-        with pd.ExcelWriter(towrite, engine="xlsxwriter") as writer:
+        with pd.ExcelWriter(towrite, engine="openpyxl") as writer:
             final_df.to_excel(writer, index=False, sheet_name="Results")
         data = towrite.getvalue()
 
