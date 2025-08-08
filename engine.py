@@ -342,16 +342,15 @@ def rank_resumes(jd_text: str, top_n: int = 5) -> pd.DataFrame:
 
 def _gemini_summary(jd_text: str, resume_text: str) -> str:
     prompt = f"""
-You are an assistant that writes a concise, specific, bullet-style fit summary.
-Compare the job description and the candidate resume.
-Highlight 4–6 concrete reasons the candidate is a good fit. Mention relevant skills, projects, and outcomes.
-Keep it under 120 words.
+Compare the job description and the candidate's resume.
+Write a short, natural explanation in 3–4 sentences about why this candidate is a good fit.
+Avoid bullet points and templates. Be concise and specific.
 
 JOB DESCRIPTION:
-{jd_text[:4000]}
+{jd_text}
 
 RESUME:
-{resume_text[:4000]}
+{resume_text}
 """
     model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
     resp = model.generate_content(prompt)
