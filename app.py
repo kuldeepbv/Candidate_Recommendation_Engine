@@ -14,8 +14,8 @@ st.set_page_config(page_title="Candidate Recommendation Engine", layout="wide")
 st.title("Candidate Recommendation Engine")
 
 # --- Inputs ---
-st.subheader("Job Description")
-jd_text = st.text_area("", height=240, placeholder="Paste the job description here...")
+#st.subheader("")
+jd_text = st.text_area("Job Description", height=240, placeholder="Paste the job description here...")
 uploaded = st.file_uploader("Upload resumes (PDF, DOCX, TXT). Multiple allowed.", type=["pdf","docx","txt"], accept_multiple_files=True)
 
 colA, _ = st.columns([1, 2])
