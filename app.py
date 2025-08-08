@@ -2,6 +2,7 @@ import os
 import streamlit as st
 import pandas as pd
 from pathlib import Path
+import io
 
 from engine import (
     store_resume_embedding,
@@ -45,11 +46,16 @@ if run_btn:
         st.success("Done.")
         st.dataframe(final_df, use_container_width=True)
 
+        towrite = io.BytesIO()
+        with pd.ExcelWriter(towrite, engine="xlsxwriter") as writer:
+            final_df.to_excel(writer, index=False, sheet_name="Results")
+        data = towrite.getvalue()
+
         st.download_button(
-            "Download Results (CSV)",
-            final_df.to_csv(index=False).encode("utf-8"),
-            file_name="ranked_candidates.csv",
-            mime="text/csv"
+            "Download Results (Excel)",
+            data,
+            file_name="ranked_candidates.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
 
     except Exception as e:
